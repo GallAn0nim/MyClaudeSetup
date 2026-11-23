@@ -1,0 +1,6 @@
+{
+  "name": "second-brain-control",
+  "version": "0.1.0",
+  "description": "Second Brain pane: potential Knowledge topics of this chat, the Inbox, Capture / Capture + Knowledge / Sanitize actions, and what SecondBrain work costs by token type",
+  "types": "./types/index.d.ts"
+}

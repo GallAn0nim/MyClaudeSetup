@@ -1,0 +1,6 @@
+{
+  "name": "cache-clock",
+  "version": "1.0.0",
+  "description": "Counts down above the prompt until this chat's prompt cache goes cold. Optional keep warm sends a tiny no-thinking ping before it expires, with hard caps",
+  "types": "./types/index.d.ts"
+}

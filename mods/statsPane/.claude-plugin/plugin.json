@@ -1,0 +1,6 @@
+{
+  "name": "statsPane",
+  "version": "0.1.0",
+  "description": "Stats side pane: context (click for the full /context breakdown), the 300k handoff line, skills used, session tokens and price, 5-hour and weekly limits with reset times, subagent costs, and thumbnails of downsized images with what they saved",
+  "types": "./types/index.d.ts"
+}

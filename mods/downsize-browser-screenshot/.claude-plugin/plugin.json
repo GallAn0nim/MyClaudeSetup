@@ -1,0 +1,6 @@
+{
+  "name": "downsize-browser-screenshot",
+  "version": "1.0.0",
+  "description": "Shrinks browser screenshots (built-in browser, Claude in Chrome, other browser MCPs) before Claude reads them, keeping click coordinates right. Other tools' images only when you opt in. If shrinking fails, the original passes through",
+  "types": "./types/index.d.ts"
+}

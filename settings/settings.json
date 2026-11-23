@@ -1,0 +1,35 @@
+{
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/agent-info:~/.claude/mods/cache-clock:~/.claude/mods/downsize-browser-screenshot:~/.claude/mods/handoff:~/.claude/mods/mods-panel:~/.claude/mods/privatizer:~/.claude/mods/statsPane:~/.claude/mods/second-brain-control"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.claude/statusline-combined.sh\""
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "juliusbrussee/caveman"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "dietrichgebert/ponytail"
+      }
+    }
+  },
+  "pluginConfigs": {
+    "ponytail@ponytail": {
+      "options": {
+        "ledger": false
+      }
+    }
+  }
+}

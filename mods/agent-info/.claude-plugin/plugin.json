@@ -1,0 +1,6 @@
+{
+  "name": "agent-info",
+  "version": "1.0.0",
+  "description": "Agent Info: a purple task progress bar above the prompt that follows the app's own task list, and a side pane with one live card per subagent and the chat cost",
+  "types": "./types/index.d.ts"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mods-panel",
+  "version": "1.0.0",
+  "description": "A Mods side pane: turn each of your mods on or off (in every chat, at once in this one) and put its common commands in the prompt box with one press",
+  "types": "./types/index.d.ts"
+}

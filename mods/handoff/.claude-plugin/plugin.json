@@ -1,0 +1,6 @@
+{
+  "name": "handoff",
+  "version": "1.0.0",
+  "description": "At 300k tokens offers Refresh: writes a low-effort handoff of the whole chat, shows its cost, then copies it or starts a new chat with it. Handoffs are deleted after 2 days",
+  "types": "./types/index.d.ts"
+}

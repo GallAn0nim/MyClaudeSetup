@@ -1,0 +1,6 @@
+{
+  "name": "privatizer",
+  "version": "1.0.0",
+  "description": "/privatizer hides emails, phones (PL/EU/intl), money (incl. PLN), IBAN, PESEL, card numbers and secrets on screen as fixed-width bars, for recording. Display only: Claude still reads the real data",
+  "types": "./types/index.d.ts"
+}

@@ -13,6 +13,8 @@ How I work with Claude Code: my modes, skills, mods, statusline, settings and co
 - **Long chats:** at 300k tokens the `handoff` mod offers a Refresh: a short handoff of the chat that starts a new one.
 - **Waiting for Claude:** during long turns [Corpore Sano](https://github.com/GallAn0nim/CorporeSano) gives me a short workout and [Ipsa Scientia](https://github.com/GallAn0nim/IpsaScientia) shows one true fact.
 - **Notes:** an Obsidian vault called SecondBrain. Claude works in it with the [`obsidian-secondbrain`](skills/obsidian-secondbrain/SKILL.md) skill and the `second-brain-control` mod.
+- **Permissions:** auto mode by default (`permissions.defaultMode: "auto"` in [`settings/settings.json`](settings/settings.json)).
+- **Upkeep:** now and then I run `/doctor` (setup health, unused skills) and `/insights` (a report on how I use Claude Code).
 - **Git:** feature branch from `develop`, PR into `develop`, no Claude attribution. See [guidance/git-workflow.md](guidance/git-workflow.md).
 
 ## Modes
@@ -61,11 +63,20 @@ Plugins I turned on in my claude.ai account. They load in the desktop app.
 | Plugin | What I use it for | Source |
 |---|---|---|
 | **frontend-design** | Distinctive UI design instead of template defaults. | [anthropics/claude-code › plugins/frontend-design](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design) |
-| **design** | Design critique, design system, UX copy, accessibility review, handoff specs, research synthesis. | [anthropics/knowledge-work-plugins › design](https://github.com/anthropics/knowledge-work-plugins/tree/main/design) |
+| **design** | `design-critique` and `accessibility-review`. The other five skills are off. | [anthropics/knowledge-work-plugins › design](https://github.com/anthropics/knowledge-work-plugins/tree/main/design) |
 | **cowork-plugin-management** | Create and customize plugins. | [anthropics/knowledge-work-plugins › cowork-plugin-management](https://github.com/anthropics/knowledge-work-plugins/tree/main/cowork-plugin-management) |
-| **VectorLab UX skills** | UI/UX taste rules: spacing, typography, colour, forms, motion, empty states, `/ux-audit`. | claude.ai plugin directory (no public GitHub repo found) |
+| **VectorLab UX skills** | Only `/ux-audit`, run by hand before finishing UI work. The 19 single-rule skills (spacing, typography, forms, motion...) are off. | claude.ai plugin directory (no public GitHub repo found) |
 
 Ponytail and Caveman also ship skills; see [Modes](#modes).
+
+### Skills I turned off
+
+After `/doctor` (2026-11-23) I switched off the skills I never call, so their descriptions stop filling the context of every chat. They are listed under `skillOverrides` in [`settings/settings.json`](settings/settings.json):
+
+- **VectorLab UX skills:** all except `ux-audit`.
+- **design:** `design-handoff`, `design-system`, `research-synthesis`, `user-research`, `ux-copy`.
+
+To turn one back on, remove its line from `skillOverrides`.
 
 ## Mods
 

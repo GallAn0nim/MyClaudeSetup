@@ -31,5 +31,34 @@
         "ledger": false
       }
     }
+  },
+  "skillOverrides": {
+    "vectorlab-ux-skills:spacing": "off",
+    "vectorlab-ux-skills:typography": "off",
+    "vectorlab-ux-skills:colour-palette": "off",
+    "vectorlab-ux-skills:anti-slop": "off",
+    "vectorlab-ux-skills:viewports": "off",
+    "vectorlab-ux-skills:page-patterns": "off",
+    "vectorlab-ux-skills:surfaces": "off",
+    "vectorlab-ux-skills:forms": "off",
+    "vectorlab-ux-skills:keyboard": "off",
+    "vectorlab-ux-skills:icon-buttons": "off",
+    "vectorlab-ux-skills:defaults": "off",
+    "vectorlab-ux-skills:verbs": "off",
+    "vectorlab-ux-skills:errors": "off",
+    "vectorlab-ux-skills:labels": "off",
+    "vectorlab-ux-skills:loaders": "off",
+    "vectorlab-ux-skills:empty-states": "off",
+    "vectorlab-ux-skills:motion": "off",
+    "vectorlab-ux-skills:transitions": "off",
+    "vectorlab-ux-skills:reduced-motion": "off",
+    "design:design-handoff": "off",
+    "design:design-system": "off",
+    "design:research-synthesis": "off",
+    "design:user-research": "off",
+    "design:ux-copy": "off"
+  },
+  "permissions": {
+    "defaultMode": "auto"
   }
 }

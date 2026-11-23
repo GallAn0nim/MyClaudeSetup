@@ -6,7 +6,8 @@
    `git switch -c features/<Name> origin/develop`
 2. Name: `features/<Name>`. PascalCase (`features/AddDockerSupport`) is my default; some repos use kebab-case (`features/add-docker-support`). Follow what the repo already does.
 3. Commit there, push, open the PR with **base `develop`**: `gh pr create --base develop`.
-4. `master` is the release branch. Work lands in `develop` first.
+4. `master` is the release branch. Work lands in `develop` first; a release is a PR from `develop` into `master`.
+5. After the PR is merged, delete the feature branch (remote and local).
 
 No `Co-Authored-By` lines and no Claude attribution in commits or PRs (set in `settings/settings.json`: `includeCoAuthoredBy: false`, empty `attribution`).
 

@@ -12,7 +12,7 @@ How I work with Claude Code: my modes, skills, mods, statusline, settings and co
 - **Side panes while I work:** my own [mods](#my-mods) show stats, cost, cache countdown, subagents, the Second Brain pane, and a Mods panel to switch them on and off.
 - **Long chats:** at 300k tokens the `handoff` mod offers a Refresh: a short handoff of the chat that starts a new one.
 - **Waiting for Claude:** during long turns [Corpore Sano](https://github.com/GallAn0nim/CorporeSano) gives me a short workout and [Ipsa Scientia](https://github.com/GallAn0nim/IpsaScientia) shows one true fact.
-- **Notes:** an Obsidian vault called SecondBrain. Claude works in it with the [`obsidian-secondbrain`](skills/obsidian-secondbrain/SKILL.md) skill and the `second-brain-control` mod.
+- **Notes:** an Obsidian vault called SecondBrain. Claude works in it with my six [`sb-*` skills](#my-own-files-in-this-repo) and the `second-brain-control` mod.
 - **Permissions:** auto mode by default (`permissions.defaultMode: "auto"` in [`settings/settings.json`](settings/settings.json)).
 - **Upkeep:** now and then I run `/doctor` (setup health, unused skills) and `/insights` (a report on how I use Claude Code).
 - **Git:** feature branch from `develop`, PR into `develop`, no Claude attribution. See [guidance/git-workflow.md](guidance/git-workflow.md).
@@ -54,7 +54,14 @@ Source: **[github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/ca
 
 | Skill | What it does |
 |---|---|
-| [`obsidian-secondbrain`](skills/obsidian-secondbrain/SKILL.md) | Obsidian Flavored Markdown and the Obsidian CLI (Bases, backlinks, unresolved links, tags, rename/move), tuned for my SecondBrain vault. The vault's own `CLAUDE.md` always wins over it. |
+| [`sb-search`](skills/sb-search/SKILL.md) | Answers from the SecondBrain vault first: queries `Knowledge.base`, reads the matching notes, cites them with wikilinks, lists gaps. Read-only. |
+| [`sb-add`](skills/sb-add/SKILL.md) | Captures material into `00-Inbox` as is, only when I ask ("dodaj do moich notatek"). |
+| [`sb-checkin`](skills/sb-checkin/SKILL.md) | Daily question and Random topic from the Second Brain pane; saves the answers to `00-Inbox`. |
+| [`sb-process`](skills/sb-process/SKILL.md) | Processes Inbox material into Knowledge notes, moves originals to `01-References`. Rules for notes, metadata and tags. |
+| [`sb-sanitize`](skills/sb-sanitize/SKILL.md) | Clean-up of Knowledge (full, tags, summary, links, knowledge), always with a plan and my approval first. |
+| [`sb-obsidian-cli`](skills/sb-obsidian-cli/SKILL.md) | Obsidian Flavored Markdown and the Obsidian CLI (Bases, backlinks, unresolved links, tags, rename/move). |
+
+The vault's own `CLAUDE.md` always wins over these skills.
 
 ### From others (links only)
 
@@ -151,7 +158,7 @@ statusline/      combined statusline script
    ```
 
    ```bash
-   ln -s "$PWD/skills/obsidian-secondbrain" ~/.claude/skills/obsidian-secondbrain
+   for s in "$PWD"/skills/*; do ln -s "$s" ~/.claude/skills/; done
    ```
 
    ```bash

@@ -39,8 +39,12 @@ export function pickDaily(notes: NoteInfo[]) {
 
 const link = (n: NoteInfo) => `[[${n.rel.replace(/\.md$/, '')}]]`
 
-const saveRules = (file: string) =>
-  `save the questions and my answers verbatim to my Inbox as a new note \`00-Inbox/${file}\`, using \`99-System/Templates/Inbox.md\` (YAML holds only \`created\`). Create it exclusively and never overwrite: if the name is taken add " (2)", " (3)". This is an explicit request to capture in my Inbox; do not process it into Knowledge and do not edit any other note.`
+/** The pane picks the notes and the file name; the procedure lives in the sb-checkin skill. */
+const checkin = (mode: 'daily' | 'random', what: string, noteLines: string[], file: string) =>
+  `${MARK(mode)} ${what} for my SecondBrain (${env.vault}). Use the sb-checkin skill in ${mode} mode with these inputs.
+Notes:
+${noteLines.length ? noteLines.join('\n') : '- (none)'}
+File: \`00-Inbox/${file}\``
 
 export function dailyPrompt(now: number, notes: NoteInfo[]) {
   const { random, old } = pickDaily(notes)
@@ -48,29 +52,14 @@ export function dailyPrompt(now: number, notes: NoteInfo[]) {
     random ? `- A random note: ${link(random)} (\`${random.rel}\`)` : '',
     old ? `- One of the five least recently modified notes: ${link(old)} (\`${old.rel}\`, last_modified ${old.lastModified})` : '',
   ].filter(Boolean)
-  return `${MARK('daily')} Daily question for my SecondBrain (${env.vault}).
-
-Step 1. Ask me these questions in one message, worded exactly like this, and wait for my answers:
-1. How was your day?
-2. Did anything good happen?
-3. Did anything bad happen?
-4. Did you train today?
-5. Did you drink a Monster?
-6. Did you learn something new?
-
-Step 2. After I answer, read each of these Knowledge notes in full and ask me one question per note whose answer would add real value to it (a gap, an outdated fact, a missing reason, example or decision). Name the note next to its question, then wait for my answers.
-${noteLines.length ? noteLines.join('\n') : '- (The vault has no Knowledge notes yet: skip this step.)'}
-
-Step 3. When I have answered, ${saveRules(`${stamp(now)} Daily question.md`)} Put each question as a heading with my answer under it, and for the note questions keep the wikilink to the note.`
+  return checkin('daily', 'Daily question', noteLines, `${stamp(now)} Daily question.md`)
 }
 
 export function randomPrompt(now: number, notes: NoteInfo[]) {
   const note = pick(notes)
   const fromNote = note && Math.random() < 0.6
-  const ask = fromNote
-    ? `Read ${link(note)} (\`${note.rel}\`) in full and ask me one question whose answer would add real value to that note (a gap, an outdated fact, a missing reason, example or decision). Name the note.`
-    : `Look over my vault through \`99-System/Knowledge.base\` (titles, tags, summaries) and ask me one thought-provoking question that would add value to it: a gap between notes, a link nobody made, or a topic the notes touch but never explain. Name the notes it relates to.`
-  return `${MARK('random')} Random topic from my SecondBrain (${env.vault}). ${ask} Then wait for my answer. When I answer, ${saveRules(`${stamp(now)} Random topic.md`)} Keep the wikilinks to the notes the question is about.`
+  const noteLines = fromNote ? [`- ${link(note)} (\`${note.rel}\`)`] : []
+  return checkin('random', 'Random topic', noteLines, `${stamp(now)} Random topic.md`)
 }
 
 // ---------- spotting vault use ----------
@@ -99,7 +88,10 @@ function rel(p: string) {
  */
 export function vaultStep(tool: string, input: Record<string, unknown>, cwdInVault: boolean): BrainStep | null {
   if (!env.vault) return null
-  if (tool === 'Skill' && /obsidian-secondbrain/.test(String(input.skill ?? ''))) return { kind: 'skill', text: 'Loaded the obsidian-secondbrain skill' }
+  if (tool === 'Skill') {
+    const sb = /(?:^|[:/])(sb-[\w-]+)$/.exec(String(input.skill ?? ''))
+    if (sb) return { kind: 'skill', text: `Loaded the ${sb[1]} skill` }
+  }
   if (tool === 'Read' && inside(input.file_path, cwdInVault)) {
     const r = rel(input.file_path)
     if (/Knowledge\.base$/.test(r)) return { kind: 'base', text: 'Checked Knowledge.base' }

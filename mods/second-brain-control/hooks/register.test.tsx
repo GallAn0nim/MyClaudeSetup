@@ -181,7 +181,7 @@ test('costs counted under the old Cleanup name move to Sanitize', async ($, on) 
   expect(saved.all.sanitize).not.toBe(undefined)
 })
 
-test('daily question is sent in this chat with the questions and two notes', async ($, on) => {
+test('daily question is sent in this chat with the sb-checkin skill and two notes', async ($, on) => {
   const w = world()
   w.files.set(`${VAULT}/02-Knowledge/A.md`, '---\nlast_modified: 2026-01-01\n---\nA')
   w.files.set(`${VAULT}/02-Knowledge/B.md`, '---\nlast_modified: 2026-10-01\n---\nB')
@@ -192,8 +192,8 @@ test('daily question is sent in this chat with the questions and two notes', asy
   expect(w.runs.some(r => r[0] === 'open')).toBe(false)
   const q = w.submits[0] ?? ''
   expect(q).toContain('[second-brain:daily]')
-  expect(q).toContain('Did anything good happen?')
-  expect(q).toContain('Did you drink a Monster?')
+  expect(q).toContain('sb-checkin')
+  expect(q).toContain('daily mode')
   expect(q).toContain('02-Knowledge/A.md')
   expect(q).toContain('00-Inbox/')
 })

@@ -58,23 +58,27 @@ Source: **[github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/ca
 
 ### From others (links only)
 
-Plugins I turned on in my claude.ai account. They load in the desktop app.
+Plugins in my claude.ai account. They load in the desktop app. Most of their skills are switched off now, see [Skills I turned off](#skills-i-turned-off).
 
-| Plugin | What I use it for | Source |
+| Plugin | What it is for | Source |
 |---|---|---|
-| **frontend-design** | Distinctive UI design instead of template defaults. | [anthropics/claude-code › plugins/frontend-design](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design) |
-| **design** | `design-critique` and `accessibility-review`. The other five skills are off. | [anthropics/knowledge-work-plugins › design](https://github.com/anthropics/knowledge-work-plugins/tree/main/design) |
-| **cowork-plugin-management** | Create and customize plugins. | [anthropics/knowledge-work-plugins › cowork-plugin-management](https://github.com/anthropics/knowledge-work-plugins/tree/main/cowork-plugin-management) |
-| **VectorLab UX skills** | Only `/ux-audit`, run by hand before finishing UI work. The 19 single-rule skills (spacing, typography, forms, motion...) are off. | claude.ai plugin directory (no public GitHub repo found) |
+| **frontend-design** | Distinctive UI design instead of template defaults. Its skill is off. | [anthropics/claude-code › plugins/frontend-design](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design) |
+| **design** | Design critique, accessibility review, handoff, design system, research and UX copy. All seven skills are off. | [anthropics/knowledge-work-plugins › design](https://github.com/anthropics/knowledge-work-plugins/tree/main/design) |
+| **cowork-plugin-management** | Create and customize plugins. Both skills are off. | [anthropics/knowledge-work-plugins › cowork-plugin-management](https://github.com/anthropics/knowledge-work-plugins/tree/main/cowork-plugin-management) |
+| **VectorLab UX skills** | Design rules (spacing, typography, forms, motion...) and `/ux-audit`. All of them are off. | claude.ai plugin directory (no public GitHub repo found) |
+| **anthropic-skills** | Documents, PDFs, spreadsheets, slides, deep research, skill creation and similar. Most are off. | claude.ai plugin directory |
 
 Ponytail and Caveman also ship skills; see [Modes](#modes).
 
 ### Skills I turned off
 
-After `/doctor` (2026-11-23) I switched off the skills I never call, so their descriptions stop filling the context of every chat. They are listed under `skillOverrides` in [`settings/settings.json`](settings/settings.json):
+I switch off the skills I never call, so their descriptions stop filling the context of every chat. They are listed under `skillOverrides` in [`settings/settings.json`](settings/settings.json), which matches my `~/.claude/settings.json` (last synced 2026-11-25):
 
-- **VectorLab UX skills:** all except `ux-audit`.
-- **design:** `design-handoff`, `design-system`, `research-synthesis`, `user-research`, `ux-copy`.
+- **VectorLab UX skills:** all of them, including `ux-audit` and `setup-ui-ux-skills`.
+- **design:** all seven.
+- **frontend-design:** `frontend-design`.
+- **cowork-plugin-management:** both skills.
+- **anthropic-skills:** `canvas-design`, `computer-use`, `consolidate-memory`, `deep-research`, `docx`, `explain-usage`, `google-workspace`, `pdf`, `pptx`, `setup-claude`, `setup-cowork`, `xlsx`, `skill-creator`, `docs`.
 
 To turn one back on, remove its line from `skillOverrides`.
 
@@ -156,7 +160,7 @@ statusline/      combined statusline script
 
 3. Merge [`settings/settings.json`](settings/settings.json) into `~/.claude/settings.json`.
 4. In each coding project, copy [`settings/project-settings.json`](settings/project-settings.json) to `.claude/settings.json`.
-5. Turn on the claude.ai plugins listed under [From others](#from-others-links-only) in the desktop app.
+5. Turn on the claude.ai plugins listed under [From others](#from-others-links-only) in the desktop app, then switch off the skills listed under [Skills I turned off](#skills-i-turned-off).
 
 ## Not in this repo
 

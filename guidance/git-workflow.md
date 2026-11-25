@@ -1,6 +1,6 @@
 # Git workflow
 
-"Branch out, commit, push and do a PR" always means:
+"Branch out, commit, push and do a PR" always means the steps below. The [`my-github`](../skills/my-github/SKILL.md) skill runs them: `/my-github push`, `/my-github check-pr`, `/my-github release`.
 
 1. `git fetch`, then branch from **`develop`**, never from `master`:
    `git switch -c features/<Name> origin/develop`

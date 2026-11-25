@@ -14,8 +14,8 @@ How I work with Claude Code: my modes, skills, mods, statusline, settings and co
 - **Waiting for Claude:** during long turns [Corpore Sano](https://github.com/GallAn0nim/CorporeSano) gives me a short workout and [Ipsa Scientia](https://github.com/GallAn0nim/IpsaScientia) shows one true fact.
 - **Notes:** an Obsidian vault called SecondBrain. Claude works in it with my six [`sb-*` skills](#my-own-files-in-this-repo) and the `second-brain-control` mod.
 - **Permissions:** auto mode by default (`permissions.defaultMode: "auto"` in [`settings/settings.json`](settings/settings.json)).
-- **Upkeep:** now and then I run `/doctor` (setup health, unused skills) and `/insights` (a report on how I use Claude Code).
-- **Git:** feature branch from `develop`, PR into `develop`, no Claude attribution. See [guidance/git-workflow.md](guidance/git-workflow.md).
+- **Upkeep:** now and then I run `/doctor` (setup health, unused skills) and `/insights` (a report on how I use Claude Code). [`/my-claude-setup update`](skills/my-claude-setup/SKILL.md) syncs my live `~/.claude` into this repo.
+- **Git:** feature branch from `develop`, PR into `develop`, no Claude attribution. See [guidance/git-workflow.md](guidance/git-workflow.md). The [`my-github`](skills/my-github/SKILL.md) skill runs this flow.
 
 ## Modes
 
@@ -54,6 +54,8 @@ Source: **[github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/ca
 
 | Skill | What it does |
 |---|---|
+| [`my-claude-setup`](skills/my-claude-setup/SKILL.md) | `info`: a short summary of this repo. `update`: syncs settings, mods, skills, statusline and plugin versions from `~/.claude` into the repo, updates this README, then runs `my-github push`. |
+| [`my-github`](skills/my-github/SKILL.md) | `push`: feature branch from `develop`, sensitive data check, commit, push, PR into `develop`. `check-pr`: review, build and tests for code changes, fix what I approve, merge on my yes, delete the branch. `release`: PR from `develop` into `master`, merge, sync local branches. |
 | [`sb-search`](skills/sb-search/SKILL.md) | Answers from the SecondBrain vault first: queries `Knowledge.base`, reads the matching notes, cites them with wikilinks, lists gaps. Read-only. |
 | [`sb-add`](skills/sb-add/SKILL.md) | Captures material into `00-Inbox` as is, only when I ask ("dodaj do moich notatek"). |
 | [`sb-checkin`](skills/sb-checkin/SKILL.md) | Daily question and Random topic from the Second Brain pane; saves the answers to `00-Inbox`. |
@@ -61,7 +63,7 @@ Source: **[github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/ca
 | [`sb-sanitize`](skills/sb-sanitize/SKILL.md) | Clean-up of Knowledge (full, tags, summary, links, knowledge), always with a plan and my approval first. |
 | [`sb-obsidian-cli`](skills/sb-obsidian-cli/SKILL.md) | Obsidian Flavored Markdown and the Obsidian CLI (Bases, backlinks, unresolved links, tags, rename/move). |
 
-The vault's own `CLAUDE.md` always wins over these skills.
+The vault's own `CLAUDE.md` always wins over the `sb-*` skills.
 
 ### From others (links only)
 
@@ -151,18 +153,14 @@ statusline/      combined statusline script
    /plugin install ipsa-scientia --marketplace GallAn0nim/IpsaScientia
    ```
 
-2. Link my own files into `~/.claude` (symlinks, so edits here are live):
+2. Copy my own files into `~/.claude` (plain copies, not symlinks; `/my-claude-setup update` brings changes back here):
 
    ```bash
-   ln -s "$PWD/mods" ~/.claude/mods
+   mkdir -p ~/.claude/mods ~/.claude/skills && cp -R mods/. ~/.claude/mods/ && cp -R skills/. ~/.claude/skills/
    ```
 
    ```bash
-   for s in "$PWD"/skills/*; do ln -s "$s" ~/.claude/skills/; done
-   ```
-
-   ```bash
-   ln -s "$PWD/statusline/statusline-combined.sh" ~/.claude/statusline-combined.sh
+   cp statusline/statusline-combined.sh ~/.claude/statusline-combined.sh
    ```
 
 3. Merge [`settings/settings.json`](settings/settings.json) into `~/.claude/settings.json`.

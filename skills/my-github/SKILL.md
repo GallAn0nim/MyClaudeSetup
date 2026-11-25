@@ -41,17 +41,19 @@ Stop and show the user every hit (mask secrets: first 4 characters, then `…`) 
 
 After a hit, ask: remove it, add the file to `.gitignore`, or keep it on purpose. Commit only once every hit is resolved. A clean check is reported in one line.
 
+A match that is only a pattern, placeholder or example in documentation (such as the lists above, `<token>`, `sk-…`) is not a hit: mention it in the one-line result as a false positive and go on.
+
 ## push
 
 1. **Look:** `git status`, current branch, fetch. If there is nothing to commit and no unpushed commits, say so and stop.
 2. **Pick the branch** by where you are:
-   - **`develop`:** propose a name from the changes (`features/<Name>`), then `git switch -c features/<Name>`; uncommitted changes move with you. Before that, make sure `develop` is not behind `origin/develop`; if it is, fast-forward it first. The PR base is `develop`.
+   - **`develop`:** propose a name from the changes (`features/<Name>`), then branch from the fetched remote: `git switch -c features/<Name> origin/develop`; uncommitted changes move with you when they do not conflict. If local `develop` has commits that `origin/develop` lacks, stop and ask whether they belong in this PR. The PR base is `develop`.
    - **A feature branch:** ask whether to stay on it or branch off from it. Branching off: ask for (or propose) the new name, and whether its PR goes into `develop` or into the current branch. Staying: the PR base is the base of the branch's existing PR, else `develop`.
    - **`master` / `main`:** stop and commit nothing. Explain, and offer to carry the changes to a new `features/<Name>` from `origin/develop` (`git switch -c features/<Name> origin/develop`, which keeps uncommitted changes when they do not conflict).
    - **Detached HEAD or a rebase/merge in progress:** stop and explain.
 3. **Stage and check:** stage the intended files by name, run the **Sensitive data check**, check the **Identity**.
 4. **Commit** with a message as in **Shared rules**.
-5. **Push** the branch (SSH, else the HTTPS fallback), then update the remote-tracking refs with a fetch.
+5. **Push** the branch (SSH with `git push -u origin <branch>`, else the HTTPS fallback). After an HTTPS push, update the remote-tracking refs with the HTTPS fetch and set the upstream: `git branch --set-upstream-to=origin/<branch>`.
 6. **PR:** if the branch already has an open PR (`gh pr list --head <branch>`), report its URL; the push updated it. Otherwise `gh pr create --base <base> --head <branch>` with the commit subject as title (or a summary for several commits) and a short English body: what changed, as 2–5 bullets.
 7. **Report:** branch, commit, PR link, and the one-line result of the sensitive data check.
 
@@ -66,9 +68,18 @@ After a hit, ask: remove it, add the file to `.gitignore`, or keep it on purpose
    - **How:** run long commands in the background and wait for them; do not start servers, deploy, run migrations against real databases, or touch anything outside the worktree. If a step needs secrets, services or tools that are missing, do not fake it: report what could not run and why.
    - **Result:** one line per step (build ok / failed; tests passed, failed, skipped). Each failure becomes a finding with its first relevant error lines.
 5. **Report** the findings as a numbered list, most severe first, one or two lines each with `file:line`, then the build and test result. With no findings, say so in one line.
-6. **Fix only on request:** ask which findings to fix (for example "1, 3" or "all" or "none"). To fix, `gh pr checkout <n>` if the PR branch is not checked out, make the changes, run step 4 again, then commit and push with the **push** steps 3–5 (same branch, no new PR).
+6. **Fix only on request:** ask which findings to fix (for example "1, 3" or "all" or "none"). Where to fix:
+   - If the user's checkout is on the PR's head branch and has no uncommitted changes, fix there.
+   - Otherwise leave the user's checkout alone and use a worktree on the head branch: `git worktree add <scratch>/fix-<n> <head>` if a local `<head>` branch exists and is not checked out elsewhere, else `git worktree add -b <head> <scratch>/fix-<n> origin/<head>`. Remove the worktree when done.
+   - For a PR from a fork, ask first: pushing to someone else's fork needs their permission.
+
+   Make the changes, run step 4 again, then commit and push with the **push** steps 3–5 (same branch, no new PR).
 7. **Merge only on approval:** ask "Merge PR #N into <base>?" Merge only after a clear yes in the conversation for this PR; a yes for another PR or an earlier one does not count. If the PR is not mergeable, CI checks fail, or the build or tests from step 4 fail, say so and do not merge unless the user explicitly says to merge anyway.
-8. **After the merge:** `gh pr merge <n> --merge`, then delete the head branch on the remote and locally — unless it is `develop`, `master` or `main`. Switch to the base branch and fast-forward it to its remote.
+8. **Merge and clean up**, in this order:
+   1. `gh pr merge <n> --merge`.
+   2. Fetch, switch to the base branch and fast-forward it (`git merge --ff-only`). Git cannot delete the branch you are on, so this comes first. If uncommitted changes block the switch, stop and say so.
+   3. Delete the head branch on the remote (`git push <remote> --delete <head>`, with the HTTPS fallback), then locally (`git branch -D <head>`), and prune with a fetch. Skip the remote delete for a PR from a fork: that branch lives in another repo.
+   4. Never delete `develop`, `master` or `main`.
 9. **Report:** merge commit, deleted branches, where the local repo is now. If the base was `develop`, mention that `release` takes it to `master`.
 
 ## release

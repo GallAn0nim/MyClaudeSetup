@@ -149,21 +149,23 @@ export async function captureConversation($: EngineInterface, topics: string[]):
 
 // ---------- the prompts the actions send ----------
 
+/** Topics from the pane are hints only: sb-process (Scope) processes them only on an explicit request. */
+const topicHint = (topics: string[]) =>
+  topics.length
+    ? ` Podpowiedź z panelu (nie prośba o zapis): potencjalne tematy z rozmowy: ${topics.join(', ')}. Opracuj z nich tylko to, co jest w podanych plikach; resztę wymień w raporcie jako nieopracowaną.`
+    : ''
+
 export function knowledgePrompt(rel: string, topics: string[]) {
-  return `${MARK('knowledge')} Opracuj w Knowledge mój plik \`${rel}\` z SecondBrain (${env.vault}) zgodnie z workflow „Process knowledge” z CLAUDE.md: przeczytaj go w całości, sprawdź istniejące notatki w 02-Knowledge (aktualizuj zamiast duplikować), napisz notatki, połącz je wikilinkami, potem przenieś oryginał do 01-References, dopisz CHANGELOG i zgłoś raport.${
-    topics.length ? ` Potencjalne tematy, które zauważyłem w rozmowie: ${topics.join(', ')}.` : ''
-  }`
+  return `${MARK('knowledge')} Opracuj w Knowledge mój plik \`${rel}\` z SecondBrain (${env.vault}) według skilla sb-process: przeczytaj go w całości, sprawdź indeks Knowledge.base i istniejące notatki (aktualizuj zamiast duplikować), napisz notatki, połącz je wikilinkami, przenieś oryginał do 01-References, dopisz CHANGELOG i zgłoś raport.${topicHint(topics)}`
 }
 
-/** Every Inbox file, oldest first, each processed fully before the next (CLAUDE.md: one source at a time). */
+/** Every Inbox file, oldest first, each processed fully before the next (sb-process: one source at a time). */
 export function knowledgeAllPrompt(rels: string[], topics: string[]) {
-  return `${MARK('knowledge')} Opracuj w Knowledge wszystkie pliki z mojego Inboxa w SecondBrain (${env.vault}), od najstarszego, po kolei — każdy w całości, zanim przejdziesz do następnego — zgodnie z workflow „Process knowledge” z CLAUDE.md: przeczytaj plik w całości, sprawdź istniejące notatki w 02-Knowledge (aktualizuj zamiast duplikować), napisz notatki, połącz je wikilinkami, potem przenieś oryginał do 01-References. Pliki:\n${rels.map(r => `- \`${r}\``).join('\n')}\nNa końcu dopisz CHANGELOG i zgłoś raport osobno dla każdego pliku.${
-    topics.length ? ` Potencjalne tematy, które zauważyłem w rozmowie: ${topics.join(', ')}.` : ''
-  }`
+  return `${MARK('knowledge')} Opracuj w Knowledge wszystkie pliki z mojego Inboxa w SecondBrain (${env.vault}) według skilla sb-process, od najstarszego, po kolei — każdy w całości, zanim przejdziesz do następnego: przeczytaj plik w całości, sprawdź indeks Knowledge.base i istniejące notatki (aktualizuj zamiast duplikować), napisz notatki, połącz je wikilinkami, przenieś oryginał do 01-References. Pliki:\n${rels.map(r => `- \`${r}\``).join('\n')}\nNa końcu dopisz CHANGELOG i zgłoś raport osobno dla każdego pliku.${topicHint(topics)}`
 }
 
 export function sanitizePrompt() {
-  return `${MARK('sanitize')} Run the Sanitize Knowledge workflow from CLAUDE.md for my SecondBrain (${env.vault}).`
+  return `${MARK('sanitize')} Run the sb-sanitize skill for my SecondBrain (${env.vault}).`
 }
 
 // ---------- costs ----------

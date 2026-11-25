@@ -1,6 +1,6 @@
 ---
-name: obsidian-secondbrain
-description: Obsidian vault know-how — Obsidian Flavored Markdown (wikilinks, embeds, callouts, block IDs, YAML properties, footnotes, Mermaid) and the Obsidian CLI (Bases queries, backlinks, unresolved links, tags, search, rename/move). Use whenever the user works in an Obsidian vault or mentions notes, wikilinks, frontmatter, Bases, the vault, "second brain", Inbox/Knowledge/References, or checking broken links, even if they never say "Obsidian". Especially for the SecondBrain vault. The active vault's CLAUDE.md always takes precedence over this skill.
+name: sb-obsidian-cli
+description: Obsidian syntax and CLI reference — Obsidian Flavored Markdown (wikilinks, embeds, callouts, block IDs, YAML properties, footnotes, Mermaid) and the Obsidian CLI (Bases queries, backlinks, unresolved links, tags, search, rename/move). Use when writing Obsidian Markdown or YAML, running Obsidian CLI commands, or checking broken links in an Obsidian vault, including the SecondBrain vault. Workflows (search, capture, check-in, processing, sanitize) live in the sb-search, sb-add, sb-checkin, sb-process and sb-sanitize skills; the active vault's CLAUDE.md always takes precedence.
 ---
 
 # Obsidian: Markdown syntax and CLI
@@ -67,13 +67,13 @@ Frontmatter sits at the very top of the file between `---` lines and must be val
 ```yaml
 ---
 created: "2026-11-09"
-tags: [architecture, dotnet]
+tags: [architektura, dotnet]
 sources: ["[[01-References/CQRS-article.md]]"]   # wikilinks in YAML must be quoted
 ---
 ```
 
 - Quote any string that contains `[[...]]`, a colon, or other YAML-special characters.
-- Obsidian itself supports nested tags (`a/b`), but a vault may restrict them; check `CLAUDE.md`.
+- Obsidian itself supports nested tags (`a/b`), but a vault may restrict them. SecondBrain's tag rules (flat, Polish, no variants) are in `sb-process` → **Tags**.
 - Binary files (images, PDF, audio) never get frontmatter.
 
 ### Other syntax
@@ -136,7 +136,6 @@ Do not use `delete`, `permanent`, `overwrite`, `plugin:install`, `eval` or other
 
 ## Checklist
 
-- **Create or edit a note:** read the template and a similar note, write valid Markdown and YAML, check that every link target exists, keep existing content and metadata.
-- **Find knowledge:** query the Bases view if the CLI works, then read the matching `.md` files; otherwise grep the folder.
-- **Rename, merge, move:** follow `CLAUDE.md`, check links and collisions first, verify afterwards.
-- **Report:** list changed files and any check you could not run.
+- **Syntax:** valid Markdown and YAML, quoted wikilinks in YAML, every link target exists.
+- **CLI:** read-only commands first; if the app is unavailable, fall back to files and say which checks you could not run.
+- **Workflows:** finding knowledge → `sb-search`; capture → `sb-add`; daily question and random topic → `sb-checkin`; create, edit, rename, merge, move → `sb-process`; clean-up of tags, summaries, links and note division → `sb-sanitize`.

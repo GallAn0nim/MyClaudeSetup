@@ -13,7 +13,23 @@ No `Co-Authored-By` lines and no Claude attribution in commits or PRs (set in `s
 
 ## Pushing from a Claude session
 
-SSH keys are not available inside Claude sessions, so `git push` to a `git@github.com:` remote fails with `Permission denied (publickey)`. `gh` is logged in, so push over HTTPS with its credentials, without touching the git config:
+Git talks to GitHub over SSH, from my terminal and from Claude sessions alike. Remotes use `git@github.com:<owner>/<repo>.git`. The key has a passphrase kept in the macOS Keychain, so no ssh-agent is needed. `~/.ssh/config` points GitHub at it:
+
+```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_github
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+  UseKeychain yes
+```
+
+Check it with `ssh -T git@github.com`. To move an HTTPS remote to SSH: `git remote set-url origin git@github.com:<owner>/<repo>.git`.
+
+### HTTPS fallback
+
+Where SSH fails (`Permission denied (publickey)`, another machine, a cloud session), `gh` is logged in, so push over HTTPS with its credentials, without touching the git config:
 
 ```bash
 git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/<owner>/<repo>.git <branch>:<branch>

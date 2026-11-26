@@ -17,7 +17,7 @@ The first word of the arguments picks the subcommand: `info` or `update`. With n
 
 ## Fetching
 
-SSH keys are usually missing in Claude sessions. If `git fetch` fails with `Permission denied (publickey)`, fetch over HTTPS with `gh` credentials:
+SSH to GitHub is set up on the user's Mac, so a plain `git fetch` works. Only if it fails with `Permission denied (publickey)` or cannot connect (another machine, a cloud session), fetch over HTTPS with `gh` credentials and tell the user SSH failed:
 
 ```bash
 git -c credential.helper= -c credential.helper='!gh auth git-credential' fetch --prune https://github.com/<owner>/<repo>.git '+refs/heads/*:refs/remotes/origin/*'

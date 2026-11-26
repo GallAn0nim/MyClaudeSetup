@@ -46,9 +46,9 @@ Tag form and language follow `sb-process` → **Tags**.
 ## Mode: summary
 
 1. **Order:** list every Knowledge note by age, oldest first. A note's age is the later of its `last_modified` and the date of its last review in a sanitize summary entry of `CHANGELOG.md`, so notes reviewed without changes go to the back of the queue.
-2. **Plan = the size and the way.** Report: "Sanitize summary obejmie N notatek; najstarsza: <title> (<date>)", and ask how many to refresh, as a number or a percentage, and whether to run here or with subagents, one per note (see **Subagents**). Wait for the answer; it is the approval for this mode. Reading notes is the expensive part, so read nothing before it. No answer on the way means here.
-3. **Refresh** the chosen number of oldest notes, each read in full, without a second approval. Rewrite the `summary` where the current one does not match the body, misses something important, or is vague. Write it from the body alone, adding no facts: in Polish, 2–3 concrete sentences. Leave a summary that is already accurate unchanged. With subagents, each note goes to its own subagent with these rules (see **Subagents → summary**).
-4. **Apply:** update `last_modified` on every note whose summary changed, verify YAML, and append the changelog entry listing the notes changed and the notes reviewed without changes; the next run's order depends on that list. With subagents, the verification and the changelog entry are yours, built from their results.
+2. **Plan = the size and the way.** Report: "Sanitize summary covers N notes; the oldest: <title> (<date>)", and ask how many to refresh, as a number or a percentage, and whether to run here or in parallel, one worker per note (see **Parallel runs**). Wait for the answer; it is the approval for this mode. Reading notes is the expensive part, so read nothing before it. No answer on the way means here.
+3. **Refresh** the chosen number of oldest notes, each read in full, without a second approval. Rewrite the `summary` where the current one does not match the body, misses something important, or is vague. Write it from the body alone, adding no facts: in Polish, 2–3 concrete sentences. Leave a summary that is already accurate unchanged. In parallel, each note goes to its own worker with these rules (see **Parallel runs → summary**).
+4. **Apply:** update `last_modified` on every note whose summary changed, verify YAML, and append the changelog entry listing the notes changed and the notes reviewed without changes; the next run's order depends on that list. In parallel, the verification and the changelog entry are yours, built from the workers' results.
 5. **Report** content that may be outdated (prices, versions, legality, dates) without changing it.
 
 ## Mode: links
@@ -65,39 +65,86 @@ Tag form and language follow `sb-process` → **Tags**.
 
 ## Mode: knowledge
 
-1. **Plan = the group.** If the user named notes, propose those as the group. Otherwise suggest a few groups of notes worth re-reading as a whole, from titles, summaries, tags and links: overlapping topics, one topic scattered over many small notes, a note covering several topics, a hub with parts that grew apart. Give each group its notes and a one-line reason, and let the user pick (or add notes). The user's choice is the approval for this mode. Here, do one group at a time. When the user picks two or more groups, also ask whether to run them here, one after another, or with subagents, one per group (see **Subagents**); no answer means here. Groups run by subagents must not share a note: move a shared note into one of them, or run those groups here.
+1. **Plan = the group.** If the user named notes, propose those as the group. Otherwise suggest a few groups of notes worth re-reading as a whole, from titles, summaries, tags and links: overlapping topics, one topic scattered over many small notes, a note covering several topics, a hub with parts that grew apart. Give each group its notes and a one-line reason, and let the user pick (or add notes). The user's choice is the approval for this mode. Here, do one group at a time. When the user picks two or more groups, also ask whether to run them here, one after another, or in parallel, one worker per group (see **Parallel runs**); no answer means here. Groups run in parallel must not share a note: move a shared note into one of them, or run those groups here.
 2. **Read** every note of the chosen group in full, and its References where needed to judge the content.
-3. **Apply under `sb-process`**, without a second approval: decide the new division (five notes may become one, three may become five, and keeping the current division is a valid result), then write it. Preserve every unique piece of information, quote and source; delete a note only after a verified merge; repair incoming links and `sources`; write each `summary` last. With subagents, each group goes to its own subagent (see **Subagents → knowledge**).
-4. **Finish:** update `last_modified`, verify YAML and links, append the changelog entry, and report the new division (which notes were merged, split, renamed or kept, and why). With subagents, finish once all of them are done: one changelog entry for the whole run, with a section per group.
+3. **Apply under `sb-process`**, without a second approval: decide the new division (five notes may become one, three may become five, and keeping the current division is a valid result), then write it. Preserve every unique piece of information, quote and source; delete a note only after a verified merge; repair incoming links and `sources`; write each `summary` last. In parallel, each group goes to its own worker (see **Parallel runs → knowledge**).
+4. **Finish:** update `last_modified`, verify YAML and links, append the changelog entry, and report the new division (which notes were merged, split, renamed or kept, and why). In parallel, finish once all workers are done: one changelog entry for the whole run, with a section per group.
 
 ## Mode: full
 
 Run `knowledge`, then `links`, then `tags`, then `summary`: restructuring first, so links, tags and summaries are fixed on the final notes. Each mode keeps its own questions, plan and approval. The user may skip a mode or stop after any of them.
 
-## Subagents
+## Parallel runs
 
-An option in `summary` and `knowledge` only, never the default: use it only when the user chose it at the approval step. It keeps each note or group's reading out of the main context and runs them in parallel. The approval, the plan, the final verification, the changelog entry and the report stay with you; subagents never ask the user anything and never touch `CHANGELOG.md`.
+An option in `summary` and `knowledge` only, never the default: use it only when the user chose it at the approval step. It keeps each note or group's reading out of the main context and runs them side by side, one **worker** per note (`summary`) or group (`knowledge`). The approval, the plan, the final verification, the changelog entry and the report stay with you; workers never ask the user anything and never touch `CHANGELOG.md`.
 
-Start them with the Agent tool (type `general-purpose`), all in one message, at most 10 at a time; with more, start the next wave when one finishes. Each prompt must be self-contained, because a subagent sees nothing of this conversation:
+### Choosing the worker
 
-- the vault path and that it must first read the vault's `CLAUDE.md` and load the `sb-process` skill, which take precedence over the prompt;
-- exactly which files it may change (below), and that every other file is read-only for it, because other subagents are writing at the same time;
+1. **Linked sessions first.** When the `start_session` tool (`mcp__ccd_session__start_session`) is available — load it with ToolSearch if it is only listed as deferred — run each worker as a linked session. The user can open, watch and steer each one, and the work does not count against this session's context.
+2. **Subagents otherwise.** Use the Agent tool (type `general-purpose`) when `start_session` is not available (for example outside the Claude desktop app), or when the app refuses the first start for any reason other than the limits in **Linked sessions → Limits**. Then run the whole run with subagents; do not mix the two. A start refused because of those limits is never a reason to switch to subagents.
+
+Say in one line which kind you are using and why.
+
+### Model and effort
+
+Every worker runs with the model and effort set for its mode, whichever kind it is:
+
+| Mode | Model | Effort | `start_session` | Agent tool |
+| --- | --- | --- | --- | --- |
+| `summary` | Haiku 5.5 | high | `model: "claude-haiku-5-5"`, `effort: "high"` | `model: "haiku"`, `effort: "high"` |
+| `knowledge` | Sonnet 5.5 | high | `model: "claude-sonnet-5-5"`, `effort: "high"` | `model: "sonnet"`, `effort: "high"` |
+
+The app may cap a linked session's model or effort at this session's own. If it does, say so in the report.
+
+### Brief (both kinds)
+
+Each brief must be self-contained, because a worker sees nothing of this conversation:
+
+- the vault path and that it must first read the vault's `CLAUDE.md` and load the `sb-process` skill, which take precedence over the brief;
+- that the user already approved this work, so it applies its changes without asking, and never asks the user anything; if it is blocked, it stops and says why in its report;
+- exactly which files it may change (below), and that every other file is read-only for it, because other workers are writing at the same time;
 - today's Mac-local date for `last_modified`;
 - what to return (below), as a short structured report, not the note's text.
 
+### Linked sessions
+
+- Start each with `start_session`: `initiation: "user_asked"` (the user chose parallel at the approval step), `context: "fresh"`, `use_worktree: false` (the vault is not a git repository; the session must edit the vault itself), a short `name` (`sb-sum-<note-slug>` or `sb-know-<group-slug>`), a `title`, the brief as `prompt`, and a `background` of at least 80 characters on the sanitize run and this worker's part in it, and the `model` and `effort` from **Model and effort**.
+- Right before the starts, call `mark_chapter` with a short batch title (for example "Sanitize summary: workers"), then write one bold title line and one sentence for the batch, and start the batch in one message, sized as in **Limits**.
+- Ask each session to begin its final message with a one-line status (`DONE <note or group>: changed | unchanged | blocked`), because the note that reaches you quotes only its first 400 characters.
+- Do not poll. The app continues you when the sessions finish their turns. Then read each session's full final report with `list_events` on its id (or ask it with `SendMessage`), and check its changes on disk: a report is not proof. Check each batch before you start the next one, from that continuation.
+- A session waiting on the user (for example a permission prompt) is theirs to answer: tell the user which one, linked as `[title](#local_<id>)`, and wait.
+- When the run is finished, offer once to archive the worker sessions; archive only on the user's yes.
+
+#### Limits
+
+The app limits how many sessions you can start:
+
+- **In a turn that answers the user's message:** start up to 10 at once.
+- **In a turn the app started by continuing you** (after workers finish): at most 5 sessions may be running at once. You can also start at most 10 sessions in total this way since the user's last message.
+
+So one go-ahead from the user covers at most 20 workers: 10 at the approval, then two batches of 5 as the app continues you. Before starting a batch, count how many workers are still running and how many you have started since the user's last message, so no start is refused. Start exactly as many as fit.
+
+- **At the approval step,** when the run needs more than 20 workers, tell the user they will be asked to continue after every 20 workers.
+- **When the limit is reached** and workers are left, check the finished batch, then end the turn with `wrap_up`. Ask whether to start the remaining N workers, with the buttons "Continue" and "Stop here". On "Continue", start the next batch.
+- **On "Stop here",** finish the run as in step 4 of the mode, with the notes done so far. For `summary`, the notes not done stay at the front of the queue for the next run.
+
+### Subagents
+
+Start them with the Agent tool, with the `model` and `effort` from **Model and effort**, all in one message, at most 10 at a time; with more, start the next wave when one finishes. Their reports come back to you directly.
+
 ### summary
 
-One subagent per note. Give it the note's path and the rules of step 3 of **Mode: summary**. It may change only that note, and only its `summary` and `last_modified` fields (`last_modified` only when the summary changed). It returns: changed or unchanged; the old and new summary when changed; content that may be outdated (step 5). Then verify the YAML of every changed note yourself.
+One worker per note. Give it the note's path and the rules of step 3 of **Mode: summary**. It may change only that note, and only its `summary` and `last_modified` fields (`last_modified` only when the summary changed). It returns: changed or unchanged; the old and new summary when changed; content that may be outdated (step 5). Then verify the YAML of every changed note yourself.
 
 ### knowledge
 
-One subagent per group. Give it the group's note paths, the reason the group was chosen, and steps 2–3 of **Mode: knowledge**. It may create notes in `02-Knowledge/`, and change or delete only the notes of its own group; it never renames with the CLI (that rewrites links in other files) and never edits notes outside its group. Instead it returns, besides the new division and why:
+One worker per group. Give it the group's note paths, the reason the group was chosen, and steps 2–3 of **Mode: knowledge**. It may create notes in `02-Knowledge/`, and change or delete only the notes of its own group; it never renames with the CLI (that rewrites links in other files) and never edits notes outside its group. Instead it returns, besides the new division and why:
 
 - renames it wants (old title → new title);
 - notes it deleted after a verified merge, and the note each was merged into;
 - every change needed outside its group: incoming links to repair (file, old link → new link) and `sources` to update.
 
-When all subagents are done, apply those outside changes yourself, one after another: renames first (with the CLI, so links follow), then the link and `sources` repairs, then check that no link points to a deleted or renamed note. Then **Finish** as in step 4.
+When all workers are done, apply those outside changes yourself, one after another: renames first (with the CLI, so links follow), then the link and `sources` repairs, then check that no link points to a deleted or renamed note. Then **Finish** as in step 4.
 
 ## Changelog
 

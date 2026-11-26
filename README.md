@@ -60,7 +60,7 @@ Source: **[github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/ca
 | [`sb-add`](skills/sb-add/SKILL.md) | Captures material into `00-Inbox` as is, only when I ask ("dodaj do moich notatek"). |
 | [`sb-checkin`](skills/sb-checkin/SKILL.md) | Daily question and Random topic from the Second Brain pane; saves the answers to `00-Inbox`. |
 | [`sb-process`](skills/sb-process/SKILL.md) | Processes Inbox material into Knowledge notes, moves originals to `01-References`. Rules for notes, metadata and tags. |
-| [`sb-sanitize`](skills/sb-sanitize/SKILL.md) | Clean-up of Knowledge (full, tags, summary, links, knowledge), always with a plan and my approval first. |
+| [`sb-sanitize`](skills/sb-sanitize/SKILL.md) | Clean-up of Knowledge (full, tags, summary, links, knowledge), always with a plan and my approval first. Summary and knowledge can run in parallel, one linked session per note or group (subagents when sessions are unavailable): Haiku 5.5 for summaries, Sonnet 5.5 for knowledge. |
 | [`sb-obsidian-cli`](skills/sb-obsidian-cli/SKILL.md) | Obsidian Flavored Markdown and the Obsidian CLI (Bases, backlinks, unresolved links, tags, rename/move). |
 
 The vault's own `CLAUDE.md` always wins over the `sb-*` skills.

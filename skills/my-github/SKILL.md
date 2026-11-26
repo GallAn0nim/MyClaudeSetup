@@ -18,7 +18,8 @@ The first word of the arguments picks the subcommand: `push`, `check-pr` (option
 - **Commit message:** one imperative line that says what changed (`Add retry to the export job`); a short body only when the reason is not obvious.
 - **Merge method:** merge commits (`gh pr merge --merge`), unless the repo allows only another method.
 - **Remote:** `<owner>/<repo>` comes from `git remote get-url origin`. Pass `--repo <owner>/<repo>` to every `gh` call.
-- **SSH fallback:** SSH keys are usually missing in Claude sessions. When `git fetch` or `git push` fails with `Permission denied (publickey)`, use HTTPS with `gh` credentials, without touching the git config:
+- **Transport: SSH first.** SSH to GitHub is set up on the user's Mac (`~/.ssh/config` maps `github.com` to the user's key, passphrase in Keychain), so plain `git fetch` / `git push` / `git pull` work in Claude sessions too. If `origin` is an HTTPS URL (`https://github.com/...`), say so once and offer to switch it with `git remote set-url origin git@github.com:<owner>/<repo>.git`; switch only on a yes, and carry on either way.
+- **HTTPS fallback:** only when SSH fails with `Permission denied (publickey)` or cannot connect (another machine, a cloud session, a broken key), use HTTPS with `gh` credentials, without touching the git config, and tell the user SSH failed:
 
   ```bash
   git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/<owner>/<repo>.git "${B}:refs/heads/${B}"

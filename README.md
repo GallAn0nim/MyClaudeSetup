@@ -127,7 +127,7 @@ They load in every chat through `CLAUDE_CODE_PLUGIN_DIRS` in [`settings/settings
 ## Code guidance
 
 - [guidance/code-style.md](guidance/code-style.md): Golden Rule, 20 principles (KISS, YAGNI, no comments, no AI fingerprints...), my formatting rules (Allman braces in C# and TypeScript, block bodies, blank lines, no tuples, no nested ternaries), naming, async and errors, Honest Work project rules, and a block ready to paste into `CLAUDE.md`.
-- [guidance/git-workflow.md](guidance/git-workflow.md): branches, PRs, pushing from a Claude session.
+- [guidance/git-workflow.md](guidance/git-workflow.md): branches, PRs, SSH to GitHub and the HTTPS fallback.
 
 ## Repo layout
 
@@ -166,6 +166,7 @@ statusline/      combined statusline script
 3. Merge [`settings/settings.json`](settings/settings.json) into `~/.claude/settings.json`.
 4. In each coding project, copy [`settings/project-settings.json`](settings/project-settings.json) to `.claude/settings.json`.
 5. Turn on the claude.ai plugins listed under [From others](#from-others-links-only) in the desktop app, then switch off the skills listed under [Skills I turned off](#skills-i-turned-off).
+6. Set up SSH to GitHub as in [guidance/git-workflow.md](guidance/git-workflow.md#pushing-from-a-claude-session): add the key to GitHub, add the `Host github.com` block to `~/.ssh/config`, save the passphrase once with `ssh-add --apple-use-keychain ~/.ssh/id_ed25519_github`.
 
 ## Not in this repo
 
